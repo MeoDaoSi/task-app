@@ -1,26 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const userRoute = require('./routes/user');
 
 const app = express();
 const port = process.env.PORT || 3000
 
+// connect db
 const db = require('./db/mongoose.js')
 mongoose.set("strictQuery", false);
 db.connect();
-const User = require('./models/users.js')
-app.use(express.json());
 
-app.post('/users', (req, res) => {
-    const user = new User(req.body);
-    console.log(user);
-    user.save()
-        .then(()=> {
-            res.send(user)
-        })
-        .catch((e)=>{
-            res.status(400).send(e)
-        })
-})
+app.use(express.json());
+// routes
+app.use(userRoute);
 
 app.listen(port, () => {
     console.log('Connect successfully!');
