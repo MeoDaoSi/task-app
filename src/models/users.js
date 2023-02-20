@@ -1,8 +1,9 @@
 const validator = require('validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const User = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -42,15 +43,43 @@ const User = new mongoose.Schema({
                 throw new Error('Age must be a postive number!')
             }
         }
-    }
+    },
+    tokens: [
+        {
+            token: {
+                type: String,
+                required: true
+            }
+        }
+    ]
 });
 
-User.pre('save', async function(next) { 
+userSchema.methods.generateAuthToken = function(){
+    user = this;
+    const token = jwt.sign({ _id: user._id.toString() }, 'meodaosi' )
+    user.tokens = user.tokens.concat({token});
+    user.save();
+    return token;
+}
+
+userSchema.statics.findByCredentials = async function( email, password ) {
+    const user = await User.findOne({email});
+    if(!user){
+        throw new Error('Invalid credentials!');
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(!isMatch){
+        throw new Error('Invalid credentials!');
+    }
+    return user;
+}
+
+userSchema.pre('save', async function(next) { 
     const user = this;
     if(user.isModified('password')){
         user.password = await bcrypt.hash(user.password, 8);
     }
     next();
 });
-
-module.exports = mongoose.model('users',User);
+const User = mongoose.model('users',userSchema);    
+module.exports = User
