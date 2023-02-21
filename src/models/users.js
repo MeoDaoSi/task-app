@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const userSchema = new mongoose.Schema({
+const User = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -11,10 +11,7 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        index: {
-            unique: true,
-            partialFilterExpression: { terms_accepted: true }
-        },
+        unique: true,
         required: true,
         trim: true,
         lowercase: true,
@@ -54,7 +51,7 @@ const userSchema = new mongoose.Schema({
     ]
 });
 
-userSchema.methods.generateAuthToken = function(){
+User.methods.generateAuthToken = function(){
     user = this;
     const token = jwt.sign({ _id: user._id.toString() }, 'meodaosi' )
     user.tokens = user.tokens.concat({token});
@@ -62,8 +59,18 @@ userSchema.methods.generateAuthToken = function(){
     return token;
 }
 
-userSchema.statics.findByCredentials = async function( email, password ) {
-    const user = await User.findOne({email});
+User.methods.toJSON = function(){
+    const user = this;
+    const userObject = user.toObject();
+    
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
+};
+
+User.statics.findByCredentials = async function( email, password ) {
+    const user = await this.findOne({email});
     if(!user){
         throw new Error('Invalid credentials!');
     }
@@ -74,12 +81,21 @@ userSchema.statics.findByCredentials = async function( email, password ) {
     return user;
 }
 
-userSchema.pre('save', async function(next) { 
+User.pre('save', async function(next) { 
     const user = this;
     if(user.isModified('password')){
         user.password = await bcrypt.hash(user.password, 8);
     }
     next();
 });
-const User = mongoose.model('users',userSchema);    
-module.exports = User
+
+// const userSchema = mongoose.model('users',User);
+
+// userSchema.init();
+
+module.exports = mongoose.model('users',User);
+
+// index: {
+//     unique: true,
+//     partialFilterExpression: { terms_accepted: true }
+// },
