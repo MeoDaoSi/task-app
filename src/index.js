@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoute = require('./routes/user');
+const taskRoute = require('./routes/task');
 
 const app = express();
 const port = process.env.PORT || 3000
@@ -13,21 +14,18 @@ db.connect();
 app.use(express.json());
 // routes
 app.use(userRoute);
+app.use(taskRoute);
 
 app.listen(port, () => {
     console.log('Connect successfully!');
 });
 
-const animes = {
-    title: 'The Shawshank Redemption',
-    year: 1994,
-    rating: 8.5,
-    genres: ['Action', 'Adventure', 'Sci-Fi'],
-    director: 'George R. R. Martin',
+const Task = require('./models/task')
+
+const main = async () => {
+    const task = await Task.findById('63f6d5fef2621a4617fa3981').populate('owner').exec( (err, task) => {
+        console.log(task.owner);
+    });
 }
 
-animes.toJSON = function (req, res) {
-    return {}
-};
-
-console.log(JSON.stringify(animes));
+main();

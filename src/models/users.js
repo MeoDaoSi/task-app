@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const User = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -51,7 +51,13 @@ const User = new mongoose.Schema({
     ]
 });
 
-User.methods.generateAuthToken = function(){
+userSchema.virtual('tasks',{
+    ref: 'tasks',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+userSchema.methods.generateAuthToken = function(){
     user = this;
     const token = jwt.sign({ _id: user._id.toString() }, 'meodaosi' )
     user.tokens = user.tokens.concat({token});
@@ -59,7 +65,7 @@ User.methods.generateAuthToken = function(){
     return token;
 }
 
-User.methods.toJSON = function(){
+userSchema.methods.toJSON = function(){
     const user = this;
     const userObject = user.toObject();
     
@@ -69,7 +75,7 @@ User.methods.toJSON = function(){
     return userObject;
 };
 
-User.statics.findByCredentials = async function( email, password ) {
+userSchema.statics.findByCredentials = async function( email, password ) {
     const user = await this.findOne({email});
     if(!user){
         throw new Error('Invalid credentials!');
@@ -81,7 +87,7 @@ User.statics.findByCredentials = async function( email, password ) {
     return user;
 }
 
-User.pre('save', async function(next) { 
+userSchema.pre('save', async function(next) { 
     const user = this;
     if(user.isModified('password')){
         user.password = await bcrypt.hash(user.password, 8);
@@ -89,11 +95,9 @@ User.pre('save', async function(next) {
     next();
 });
 
-// const userSchema = mongoose.model('users',User);
+const User = mongoose.model('users',userSchema);
 
-// userSchema.init();
-
-module.exports = mongoose.model('users',User);
+module.exports = User;
 
 // index: {
 //     unique: true,
