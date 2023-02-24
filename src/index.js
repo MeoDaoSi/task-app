@@ -20,12 +20,12 @@ app.listen(port, () => {
     console.log('Connect successfully!');
 });
 
-const Task = require('./models/task')
+// const Task = require('./models/task')
 
-const main = async () => {
-    const task = await Task.findById('63f6d5fef2621a4617fa3981').populate('owner').exec( (err, task) => {
-        console.log(task.owner);
-    });
-}
+// const main = async () => {
+//     const task = await Task.findById('63f6d5fef2621a4617fa3981').populate('owner').exec( (err, task) => {
+//         console.log(task.owner);
+//     });
+// }
 
-main();
+// main();
