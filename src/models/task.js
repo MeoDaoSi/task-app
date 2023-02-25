@@ -21,14 +21,6 @@ const taskSchema = new mongoose.Schema({
         ref: 'users',
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
     priority: {
         type: Number,
         default: 0
@@ -42,6 +34,8 @@ const taskSchema = new mongoose.Schema({
         type: Date,
         required: false
     }
+}, {
+    timestamps: true
 })
 
 const Task = mongoose.model('tasks',taskSchema);
