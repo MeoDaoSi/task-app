@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoute = require('./routes/user');
 const taskRoute = require('./routes/task');
+const multer = require('multer');
 
 const app = express();
 const port = process.env.PORT || 3000
@@ -20,12 +21,11 @@ app.listen(port, () => {
     console.log('Connect successfully!');
 });
 
-// const Task = require('./models/task')
+const images = multer({
+    dest: "images"
+})
 
-// const main = async () => {
-//     const task = await Task.findById('63f6d5fef2621a4617fa3981').populate('owner').exec( (err, task) => {
-//         console.log(task.owner);
-//     });
-// }
-
-// main();
+app.post('/upload', images.single('file'), (req, res) => {
+    console.log(req.file);
+    res.send(req.file);
+})

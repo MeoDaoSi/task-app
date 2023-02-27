@@ -31,6 +31,9 @@ router.get('/tasks/:id', auth, async (req, res) => {
 })
 
 router.get('/tasks', auth, async (req, res) => {
+    // lay du lieu tu thanh dia chi
+    const limit = req.query.limit;
+    const skip = req.query.skip;
     const match = {};
     const sort = {};
     if (req.query.completed) {
@@ -47,8 +50,8 @@ router.get('/tasks', auth, async (req, res) => {
             path: 'allTask',
             match,
             options: {
-                limit: parseInt(req.query.limit) || undefined,
-                skip: parseInt(req.query.skip) || undefined,
+                limit: parseInt(limit) || undefined,
+                skip: parseInt(skip) || undefined,
                 sort
             }
         }).exec((error,task)=>{
