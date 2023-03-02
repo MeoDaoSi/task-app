@@ -73,7 +73,6 @@ router.delete('/users/me', auth, async (req, res) => {
 })
 
 const upload = multer({
-    dest: 'images',
     limits: 1000000,
     fileFilter: (req, file, cb) => {
         if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
@@ -83,10 +82,31 @@ const upload = multer({
     }
 })
 
-router.post('/users/me/photo', upload.single('photo'), async (req, res) => {
-    res.send(req.file);
+router.post('/users/me/photo', auth, upload.single('photo'), async (req, res) => {
+    req.user.avatar = req.file.buffer;
+    await req.user.save();
+    res.send();
 }, (error, req, res, next) => {
     res.status(404).send({error: error.message});
 });
+
+router.delete('/users/me/photo', auth, upload.single('photo'), async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.send();
+})
+
+router.get('/users/:id/photo', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if ( !user || !user.avatar ){
+            throw new Error();
+        }
+        res.set("Content-Type","image/png");
+        res.send(user.avatar);
+    } catch (error) {
+        res.status(500).send({error: error.message});
+    }
+})
 
 module.exports = router;

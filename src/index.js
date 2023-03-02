@@ -21,11 +21,22 @@ app.listen(port, () => {
     console.log('Connect successfully!');
 });
 
-const images = multer({
-    dest: "images"
-})
+// const images = multer({
+//     dest: "images"
+// })
 
-app.post('/upload', images.single('file'), (req, res) => {
-    console.log(req.file);
-    res.send(req.file);
-})
+// app.post('/upload', images.single('file'), (req, res) => {
+//     console.log(req.file);
+//     res.send(req.file);
+// })
+
+// const fs = require('fs');
+
+// const dataImage = fs.readFileSync('images\\9fa8ccf940c418d1c34b5b8a79eaa42d');
+
+// console.log(dataImage);
+
+// const encodedImageData = dataImage.toString('base64');
+
+// console.log(encodedImageData);
+
