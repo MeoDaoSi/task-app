@@ -11,9 +11,9 @@ router.post('/tasks', auth, async (req, res) => {
     });
     try {
         await task.save();
-        res.status(201).send(task);
+        res.status(201).json(task);
     } catch (error) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
@@ -22,11 +22,11 @@ router.get('/tasks/:id', auth, async (req, res) => {
     try {
         const task = await Task.findOne({ _id, owner: req.user._id });
         if (!task) {
-            return res.status(404).send();
+            return res.status(404).json();
         }
-        res.status(200).send(task);
+        res.status(200).json(task);
     } catch (error) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
@@ -55,10 +55,10 @@ router.get('/tasks', auth, async (req, res) => {
                 sort
             }
         }).exec((error,task)=>{
-            res.status(200).send(task[0].allTask);
+            res.status(200).json(task[0].allTask);
         });
     } catch (e) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
@@ -67,19 +67,19 @@ router.patch('/tasks/:id', auth, async (req, res) => {
     const allowedUpdates = ['title', 'description', 'completed', 'priority', 'dueDate'];
     const isMatchUpdate = updates.every((update) => allowedUpdates.includes(update));
     if (!isMatchUpdate) {
-        return res.status(400).send();
+        return res.status(400).json();
     }
     try {
         const _id = req.params.id;
         const task = await Task.findOne({ _id, owner: req.user._id });
         if (!task) {
-            return res.status(404).send();
+            return res.status(404).json();
         }
         updates.forEach((update) => task[update] = req.body[update]);
         task.save();
-        res.status(200).send(task);
+        res.status(200).json(task);
     } catch (e) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
@@ -88,11 +88,11 @@ router.delete('/tasks/:id', auth, async (req, res) => {
     try {
         const task = await Task.findOneAndDelete({ _id, owner: req.user._id})
         if(!task){
-            res.status(404).send();
+            res.status(404).json();
         }
-        res.send(task);
+        res.json(task);
     } catch (error) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 

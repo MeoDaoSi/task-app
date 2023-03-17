@@ -9,9 +9,9 @@ router.post('/users', async (req, res) => {
     try {
         await user.save();
         const token = await user.generateAuthToken();
-        res.status(201).send({user, token});
+        res.status(201).json({user, token});
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 })
 
@@ -19,9 +19,9 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email,req.body.password);
         const token = await user.generateAuthToken();
-        res.send({user, token});
-    } catch (e) {
-        res.status(400).send();
+        res.json({user, token});
+    } catch (error) {
+        res.status(400).json();
     }
 })
 
@@ -29,9 +29,9 @@ router.post('/users/logout', auth, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token);
         await req.user.save();
-        res.send();
+        res.json();
     } catch (e) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
@@ -39,14 +39,14 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     try {
         req.user.tokens = [];
         await req.user.save();
-        res.send();
+        res.json();
     } catch (e) {
-        res.status(500).send();
+        res.status(500).json();
     }
 })
 
 router.get('/users/me', auth , async (req, res) => {
-    res.send(req.user)
+    res.json(req.user)
 })
 
 router.patch('/users/me', auth, async (req, res) => {
@@ -57,18 +57,18 @@ router.patch('/users/me', auth, async (req, res) => {
         const user = await User.findById(req.user._id);
         updates.forEach((update) => (user[update] = req.body[update]));
         await user.save();
-        res.status(201).send(user);
+        res.status(201).json(user);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 })
 
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove();
-        res.send(req.user);
+        res.json(req.user);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 })
 
@@ -85,15 +85,15 @@ const upload = multer({
 router.post('/users/me/photo', auth, upload.single('photo'), async (req, res) => {
     req.user.avatar = req.file.buffer;
     await req.user.save();
-    res.send();
+    res.json();
 }, (error, req, res, next) => {
-    res.status(404).send({error: error.message});
+    res.status(404).json({error: error.message});
 });
 
 router.delete('/users/me/photo', auth, upload.single('photo'), async (req, res) => {
     req.user.avatar = undefined;
     await req.user.save();
-    res.send();
+    res.json();
 })
 
 router.get('/users/:id/photo', async (req, res) => {
@@ -103,9 +103,9 @@ router.get('/users/:id/photo', async (req, res) => {
             throw new Error();
         }
         res.set("Content-Type","image/png");
-        res.send(user.avatar);
+        res.json(user.avatar);
     } catch (error) {
-        res.status(500).send({error: error.message});
+        res.status(500).json({error: error.message});
     }
 })
 

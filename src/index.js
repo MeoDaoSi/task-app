@@ -3,9 +3,13 @@ const mongoose = require('mongoose');
 const userRoute = require('./routes/user');
 const taskRoute = require('./routes/task');
 const multer = require('multer');
+const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 80
+
+// Thiết lập CORS middleware
+app.use(cors());
 
 // connect db
 const db = require('./db/mongoose.js')
