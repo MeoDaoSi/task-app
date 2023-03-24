@@ -3,6 +3,7 @@ const router = express.Router();
 const Task = require('../models/task')
 const auth = require('../middleware/auth');
 const User = require('../models/users');
+const Board = require('../models/boards');
 
 router.post('/tasks', auth, async (req, res) => {
     const task = new Task({
@@ -13,7 +14,7 @@ router.post('/tasks', auth, async (req, res) => {
         await task.save();
         res.status(201).json(task);
     } catch (error) {
-        res.status(500).json();
+        res.status(400).json();
     }
 })
 
@@ -46,7 +47,7 @@ router.get('/tasks', auth, async (req, res) => {
         }
     }
     try {
-        await User.find({ _id: req.user._id }).populate({
+        await Board.find({ _id: req.user._id }).populate({
             path: 'allTask',
             match,
             options: {

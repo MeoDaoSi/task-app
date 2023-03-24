@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Task = require('../models/task');
+const Board = require('./boards');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -59,8 +60,8 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-userSchema.virtual('allTask',{
-    ref: 'tasks',
+userSchema.virtual('allBoard',{
+    ref: 'boards',
     localField: '_id',
     foreignField: 'owner'
 })
@@ -107,7 +108,7 @@ userSchema.pre('save', async function(next) {
 // delete all tasks before removing user
 userSchema.pre('remove', async function(next){
     const user = this;
-    await Task.deleteMany({owner: user._id});
+    await Board.deleteMany({owner: user._id});
     next();
 });
 

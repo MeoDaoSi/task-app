@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoute = require('./routes/user');
 const taskRoute = require('./routes/task');
+const boardRoute = require('./routes/board');
 const multer = require('multer');
 const cors = require('cors');
 
@@ -20,6 +21,7 @@ app.use(express.json());
 // routes
 app.use(userRoute);
 app.use(taskRoute);
+app.use(boardRoute);
 
 app.listen(port, () => {
     console.log('Connect successfully!');
