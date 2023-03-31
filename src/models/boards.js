@@ -4,7 +4,7 @@ const validator = require('validator');
 const boardSchema = new mongoose.Schema({
     title: {
         type: String,
-        default: 'undefine'
+        default: 'Untitled'
     },
     description: {
         type: String,
@@ -15,11 +15,11 @@ const boardSchema = new mongoose.Schema({
     position: {
         type: Number
     },
-    favourite: {
+    favorite: {
         type: Boolean,
         default: false
     },
-    favouritePosition: {
+    favoritePosition: {
         type: Number,
         default: 0
     },

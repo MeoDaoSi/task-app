@@ -34,6 +34,24 @@ router.get('/boards', auth, async function (req, res) {
     }
 })
 
+router.get('/favorite/boards', auth, async function (req, res) {
+    try {
+        await User.findOne({_id: req.user._id}).populate({
+            path: 'allBoard',
+            match: { favorite: true },
+            options: {
+                // sort: {
+                //     position: 1
+                // }
+            }
+        }).exec((error,board)=>{
+            res.status(200).json(board.allBoard);
+        })
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
 router.patch('/boards', auth, async function (req, res) {
     const {boards} = req.body;
     try {
@@ -43,6 +61,23 @@ router.patch('/boards', auth, async function (req, res) {
                 { _id: board._id },
                 { 
                     position: key
+                });
+        }
+        res.status(200).json();
+    } catch (error) {
+        res.status(400).json(error);
+    }
+})
+
+router.patch('/favorite/boards', auth, async function (req, res) {
+    const {boards} = req.body;
+    try {
+        for ( let key in boards ){
+            const board = boards[key];
+            await Board.findOneAndUpdate(
+                { _id: board._id },
+                { 
+                    favoritePosition: key
                 });
         }
         res.status(200).json();
@@ -66,18 +101,22 @@ router.get('/boards/:id', auth, async (req, res) => {
 
 router.patch('/boards/:id', auth, async (req, res) => {
     const update = Object.keys(req.body);
-    const [key] = update;
+    const key = update[0];
     const _id = req.params.id;
     try {
         const board = await Board.findOne({ _id, owner: req.user._id });
+        console.log(board);
         if (!board) {
             return res.status(404).json();
-        } 
+        }
+
         board[key] = req.body[key];
+        console.log(board[key]);
+
         board.save();
         res.status(200).json(board);
     } catch (e) {
-        res.status(500).json();
+        res.status(500).json(e);
     }
 })
 
