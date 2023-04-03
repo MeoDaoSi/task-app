@@ -16,9 +16,9 @@ const taskSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    board: {
+    section: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'boards',
+        ref: 'sections',
         required: true
     },
     priority: {

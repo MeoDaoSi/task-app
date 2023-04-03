@@ -4,6 +4,7 @@ const Task = require('../models/task')
 const auth = require('../middleware/auth');
 const User = require('../models/users');
 const Board = require('../models/boards')
+const Section = require('../models/sections')
 
 router.post('/boards', auth, async function (req, res) {
     const board = new Board({
@@ -93,6 +94,8 @@ router.get('/boards/:id', auth, async (req, res) => {
         if (!board) {
             return res.status(404).json();
         }
+        const sections = await Section.find({ board: _id })
+        board._doc.sections = sections
         res.status(200).json(board);
     } catch (error) {
         res.status(500).json();
@@ -105,13 +108,11 @@ router.patch('/boards/:id', auth, async (req, res) => {
     const _id = req.params.id;
     try {
         const board = await Board.findOne({ _id, owner: req.user._id });
-        console.log(board);
         if (!board) {
             return res.status(404).json();
         }
 
         board[key] = req.body[key];
-        console.log(board[key]);
 
         board.save();
         res.status(200).json(board);

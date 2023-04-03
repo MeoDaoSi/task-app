@@ -32,8 +32,8 @@ const boardSchema = new mongoose.Schema({
     timestamps: true
 })
 
-boardSchema.virtual('allTask', {
-    ref: 'tasks',
+boardSchema.virtual('allSection', {
+    ref: 'sections',
     localField: '_id',
     foreignField: 'board'
 })

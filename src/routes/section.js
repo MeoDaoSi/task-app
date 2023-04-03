@@ -29,6 +29,7 @@ router.patch('/boards/:idBoard/sections/:idSection', auth, async (req, res) => {
             return res.status(500).json()
         }
         section[key] = req.body[key];
+        await section.save();
         res.status(200).json(section);
     } catch (error) {
         res.status(500).json();
