@@ -7,6 +7,7 @@ router.post('/boards/:idBoard/sections', auth, async (req, res) => {
     const section = new Section({
         board: req.params.idBoard
     })
+    section._doc.tasks = [];
     try {
         await section.save();
         res.status(201).json(section);

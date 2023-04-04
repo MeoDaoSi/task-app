@@ -4,9 +4,7 @@ const validator = require('validator');
 const taskSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
-        trim: true,
-        unique : true
+        default: ''
     },
     description: {
         type: String,
@@ -23,7 +21,6 @@ const taskSchema = new mongoose.Schema({
     },
     priority: {
         type: Number,
-        default: 0
     },
     // assignee: {
     //     type: mongoose.Schema.Types.ObjectId,

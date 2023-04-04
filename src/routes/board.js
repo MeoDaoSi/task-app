@@ -79,7 +79,8 @@ router.patch('/favorite/boards', auth, async function (req, res) {
                 { _id: board._id },
                 { 
                     favoritePosition: key
-                });
+                }
+            );
         }
         res.status(200).json();
     } catch (error) {
@@ -95,6 +96,10 @@ router.get('/boards/:id', auth, async (req, res) => {
             return res.status(404).json();
         }
         const sections = await Section.find({ board: _id })
+        for (const section of sections) {
+            const tasks = await Task.find({ section: section._id }).populate('').sort({ priority: 1 });
+            section._doc.tasks = tasks
+        }
         board._doc.sections = sections
         res.status(200).json(board);
     } catch (error) {

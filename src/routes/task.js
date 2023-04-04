@@ -7,8 +7,7 @@ const Board = require('../models/boards');
 
 router.post('/tasks', auth, async (req, res) => {
     const task = new Task({
-        ...req.body,
-        owner: req.user._id
+        section: req.body?.sectionId
     });
     try {
         await task.save();
@@ -63,22 +62,51 @@ router.get('/tasks', auth, async (req, res) => {
     }
 })
 
-router.patch('/tasks/:id', auth, async (req, res) => {
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ['title', 'description', 'completed', 'priority', 'dueDate'];
-    const isMatchUpdate = updates.every((update) => allowedUpdates.includes(update));
-    if (!isMatchUpdate) {
-        return res.status(400).json();
-    }
+router.patch('/tasks', auth, async (req, res) => {
+    // const updates = Object.keys(req.body);
+    // const allowedUpdates = ['title', 'description', 'completed', 'priority', 'dueDate'];
+    // const isMatchUpdate = updates.every((update) => allowedUpdates.includes(update));
+    // if (!isMatchUpdate) {
+    //     return res.status(400).json();
+    // }
+    const {
+        sourceList,
+        destList,
+        sourceSectionId,
+        destSectionId
+    } = req.body
     try {
-        const _id = req.params.id;
-        const task = await Task.findOne({ _id, owner: req.user._id });
-        if (!task) {
-            return res.status(404).json();
+        // const _id = req.params.id;
+        // const task = await Task.findOne({ _id, owner: req.user._id });
+        // if (!task) {
+        //     return res.status(404).json();
+        // }
+        // updates.forEach((update) => task[update] = req.body[update]);
+        // task.save();
+        // res.status(200).json(task);
+        if ( sourceSectionId !== destSectionId ){
+            console.log(sourceSectionId);
+            console.log(destSectionId);
+            for ( let key in sourceList ){
+                await Task.findOneAndUpdate(
+                    { _id: sourceList[key] },
+                    { 
+                        section: sourceSectionId,
+                        priority: key
+                    }
+                );
+            }
+            for ( let key in destList ){
+                await Task.findOneAndUpdate(
+                    { _id: destList[key] },
+                    { 
+                        section: destSectionId,
+                        priority: key
+                    }
+                );
+            }
         }
-        updates.forEach((update) => task[update] = req.body[update]);
-        task.save();
-        res.status(200).json(task);
+        res.status(200).json();
     } catch (e) {
         res.status(500).json();
     }
