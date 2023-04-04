@@ -4,12 +4,16 @@ const Task = require('../models/task')
 const auth = require('../middleware/auth');
 const User = require('../models/users');
 const Board = require('../models/boards');
+const Section = require('../models/sections');
 
 router.post('/tasks', auth, async (req, res) => {
-    const task = new Task({
-        section: req.body?.sectionId
-    });
+    const { sectionId } = req.body;
     try {
+        const tasksCount = await Task.find({ section: sectionId }).count();
+        const task = new Task({
+            section: sectionId,
+            priority: tasksCount > 0 ? tasksCount : 0
+        });
         await task.save();
         res.status(201).json(task);
     } catch (error) {
@@ -85,8 +89,6 @@ router.patch('/tasks', auth, async (req, res) => {
         // task.save();
         // res.status(200).json(task);
         if ( sourceSectionId !== destSectionId ){
-            console.log(sourceSectionId);
-            console.log(destSectionId);
             for ( let key in sourceList ){
                 await Task.findOneAndUpdate(
                     { _id: sourceList[key] },
@@ -115,7 +117,7 @@ router.patch('/tasks', auth, async (req, res) => {
 router.delete('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id ;
     try {
-        const task = await Task.findOneAndDelete({ _id, owner: req.user._id})
+        const task = await Task.findOneAndDelete({ _id })
         if(!task){
             res.status(404).json();
         }
