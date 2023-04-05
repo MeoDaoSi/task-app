@@ -114,6 +114,24 @@ router.patch('/tasks', auth, async (req, res) => {
     }
 })
 
+router.patch('/tasks/:id', auth, async (req, res) => {
+    const _id = req.params.id ;
+    const update = Object.keys(req.body);
+    const key = update[0];
+    try {
+        const task = await Task.findOne({ _id })
+        if(!task){
+            res.status(404).json();
+        }
+        task[key] = req.body[key];
+        console.log(task);
+        task.save();
+        res.json(task);
+    } catch (error) {
+        res.status(500).json();
+    }
+})
+
 router.delete('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id ;
     try {
