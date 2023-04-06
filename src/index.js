@@ -4,6 +4,7 @@ const userRoute = require('./routes/user');
 const taskRoute = require('./routes/task');
 const boardRoute = require('./routes/board');
 const sectionRoute = require('./routes/section');
+const adminRoute = require('./routes/admin');
 
 const multer = require('multer');
 const cors = require('cors');
@@ -25,6 +26,7 @@ app.use(userRoute);
 app.use(taskRoute);
 app.use(boardRoute);
 app.use(sectionRoute);
+app.use(adminRoute);
 
 app.listen(port, () => {
     console.log('Connect successfully!');
