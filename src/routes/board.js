@@ -20,8 +20,9 @@ router.post('/boards', auth, async function (req, res) {
 
 router.get('/boards', auth, async function (req, res) {
     try {
-        await User.findOne({_id: req.user._id}).populate({
+        await User.findOne({_id: req.user._id }).populate({
             path: 'allBoard',
+            match: { favorite: false },
             options: {
                 sort: {
                     position: 1

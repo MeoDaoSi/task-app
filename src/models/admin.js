@@ -8,26 +8,26 @@ const Board = require('./boards');
 const adminSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        // required: true,
         trim: true
     },
-    email: {
+    username: {
         type: String,
         unique: true,
         required: true,
         trim: true,
         lowercase: true,
-        validate(value){
-            if (!validator.isEmail(value)) {
-                throw new Error('Email is invalid!')
-            }
-        }
+        // validate(value){
+        //     if (!validator.isEmail(value)) {
+        //         throw new Error('Email is invalid!')
+        //     }
+        // }
     },
     password: {
         type: String,
         required: true,
         trim: true,
-        minlength: 7,
+        // minlength: 7,
         validate(value){
             if (value.toLowerCase().includes('password')) {
                 throw new Error('Password cannot contain "password"!')
@@ -51,13 +51,25 @@ const adminSchema = new mongoose.Schema({
     timestamps: true
 });
 
-adminSchema.method.genarateAuthToken = () => {
+adminSchema.methods.toJSON = function(){
+    const admin = this;
+
+    const adminObject = admin.toObject();
+
+    delete adminObject.tokens;
+    delete adminObject.password;
+
+    return adminObject;
+}
+
+adminSchema.methods.generateAuthToken = function() {
     admin = this;
     const token = jwt.sign({_id: admin._id.toString() }, 'meodaosi')
     admin.tokens = admin.tokens.concat({token})
     admin.save();
     return token;
 }
+
 
 // adminSchema.virtual('allBoard',{
 //     ref: 'boards',
