@@ -1,4 +1,4 @@
-const Admin = require('../models/admin');
+const Admin = require('../models/admins');
 const jwt = require('jsonwebtoken');
 const authAdmin = async (req, res, next) => {
     try {
