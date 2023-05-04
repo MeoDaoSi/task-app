@@ -124,7 +124,6 @@ router.patch('/tasks/:id', auth, async (req, res) => {
             res.status(404).json();
         }
         task[key] = req.body[key];
-        console.log(task);
         task.save();
         res.json(task);
     } catch (error) {
