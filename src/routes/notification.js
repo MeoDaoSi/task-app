@@ -4,9 +4,12 @@ const auth = require('../middleware/auth')
 const Notification = require('../models/notifications')
 
 router.post('/notification', auth, async (req, res) => {
-    const {taskId} = req.body;
+    const {taskId,content} = req.body;
+    console.log(content);
+    console.log(taskId);
     try {
         notification = new Notification({
+            content: content,
             user: req.user._id,
             task: taskId
         });

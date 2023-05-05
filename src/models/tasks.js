@@ -4,7 +4,7 @@ const validator = require('validator');
 const taskSchema = new mongoose.Schema({
     title: {
         type: String,
-        default: ''
+        default: 'Untitled'
     },
     description: {
         type: String,

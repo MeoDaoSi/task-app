@@ -34,34 +34,44 @@ router.get('/tasks/:id', auth, async (req, res) => {
     }
 })
 
+// router.get('/tasks', auth, async (req, res) => {
+//     // lay du lieu tu thanh dia chi
+//     const limit = req.query.limit;
+//     const skip = req.query.skip;
+//     const match = {};
+//     const sort = {};
+//     if (req.query.completed) {
+//         match.completed = req.query.completed === 'true';
+//     }
+//     if (req.query.sortBy) {
+//         const parts = req.query.sortBy.split(':');
+//         if (parts.length === 2) {
+//             sort[parts[0]] = parts[1] === 'asc' ? 1 : -1;
+//         }
+//     }
+//     try {
+//         await Board.find({ _id: req.user._id }).populate({
+//             path: 'allTask',
+//             match,
+//             options: {
+//                 limit: parseInt(limit) || undefined,
+//                 skip: parseInt(skip) || undefined,
+//                 sort
+//             }
+//         }).exec((error,task)=>{
+//             console.log(task);
+//             res.status(200).json(task[0]?.allTask);
+//         });
+//     } catch (e) {
+//         res.status(500).json();
+//     }
+// })
+
 router.get('/tasks', auth, async (req, res) => {
-    // lay du lieu tu thanh dia chi
-    const limit = req.query.limit;
-    const skip = req.query.skip;
-    const match = {};
-    const sort = {};
-    if (req.query.completed) {
-        match.completed = req.query.completed === 'true';
-    }
-    if (req.query.sortBy) {
-        const parts = req.query.sortBy.split(':');
-        if (parts.length === 2) {
-            sort[parts[0]] = parts[1] === 'asc' ? 1 : -1;
-        }
-    }
     try {
-        await Board.find({ _id: req.user._id }).populate({
-            path: 'allTask',
-            match,
-            options: {
-                limit: parseInt(limit) || undefined,
-                skip: parseInt(skip) || undefined,
-                sort
-            }
-        }).exec((error,task)=>{
-            res.status(200).json(task[0].allTask);
-        });
-    } catch (e) {
+        const tasks = await Task.find();
+        res.status(200).json(tasks);
+    } catch (error) {
         res.status(500).json();
     }
 })
@@ -120,18 +130,13 @@ router.patch('/tasks/:id', auth, async (req, res) => {
     const key = update[0];
 
     const date = new Date(req.body[key]);
-    const day = date.getDate();
-    const month = date.getMonth();
-    const year = date.getFullYear();
     // const dateString = date.toLocaleDateString();
-    const dateString = `${year}-${month}-${day}`;
-    console.log(date);
     try {
         const task = await Task.findOne({ _id })
         if(!task){
             res.status(404).json();
         }
-        task[key] = dateString;
+        task[key] = req.body[key];
         task.save();
         res.json(task);
     } catch (error) {

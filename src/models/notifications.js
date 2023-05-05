@@ -4,7 +4,6 @@ const notificationSchema = new mongoose.Schema({
     content: {
         type : String,
         trim: true,
-        default: 'Thong bao task sap het han'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
