@@ -15,6 +15,8 @@ const notificationSchema = new mongoose.Schema({
         ref: 'tasks',
         require: true
     }
+},{
+    timestamps: true
 })
 
 const Notification = mongoose.model('notifications', notificationSchema);
