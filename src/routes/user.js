@@ -2,6 +2,7 @@ const express = require('express');
 const router = new express.Router();
 const User = require('../models/users')
 const auth = require('../middleware/auth');
+const authAdmin = require('../middleware/authAdmin');
 const multer = require('multer');
 
 router.post('/users', async (req, res) => {
@@ -41,6 +42,14 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         await req.user.save();
         res.json();
     } catch (e) {
+        res.status(500).json();
+    }
+})
+router.get('/users', authAdmin, async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
         res.status(500).json();
     }
 })

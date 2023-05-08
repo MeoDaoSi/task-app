@@ -19,7 +19,6 @@ router.post('/boards', auth, async function (req, res) {
 })
 
 router.get('/boards', auth, async function (req, res) {
-    console.log(req.user._id);
     try {
         await User.findOne({_id: req.user._id }).populate({
             path: 'allBoard',

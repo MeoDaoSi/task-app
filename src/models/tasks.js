@@ -22,11 +22,6 @@ const taskSchema = new mongoose.Schema({
     priority: {
         type: Number,
     },
-    assignee: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: false
-    },
     dueDate: {
         type: Date,
         required: false
